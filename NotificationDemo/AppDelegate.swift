@@ -26,6 +26,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     print(settings)
                 })
             })
+            
+            
+            let action = UNNotificationAction(identifier: "reply", title: "Reply", options: [.destructive])
+            // this options is same as isDestructive in previous system version. and there are other options: authenticationRequired, foreground
+            let input = UNTextInputNotificationAction(identifier: "input", title: "Input", options: [.destructive])
+            let category = UNNotificationCategory(identifier: "message", actions: [action, input], intentIdentifiers: [], options: [])
+            
+            center.setNotificationCategories([category])
         } else {
             PermissionManager.registerNotificationSettings(application: application)
         }
@@ -88,7 +96,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        print(response)
+        
+        if response.actionIdentifier == "reply" {
+            print("click reply")
+        } else if response.actionIdentifier == "input" {
+            let resp = response as! UNTextInputNotificationResponse
+            print(resp.userText)
+        }
+        
         completionHandler()
     }
 }
