@@ -17,22 +17,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        
-        
         if #available(iOS 10.0, *) {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge], completionHandler: { (success, error) in
+            let center = UNUserNotificationCenter.current()
+            center.delegate = self
+            center.requestAuthorization(options: [.alert, .sound, .badge], completionHandler: { (success, error) in
                 print(success)
-                print(error)
-                UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { settings in
+                center.getNotificationSettings(completionHandler: { settings in
                     print(settings)
                 })
             })
-            application.registerForRemoteNotifications()
-            
         } else {
             PermissionManager.registerNotificationSettings(application: application)
-            application.registerForRemoteNotifications()
         }
+        application.registerForRemoteNotifications()
         
         return true
     }
@@ -78,6 +75,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         application.applicationIconBadgeNumber = 0
+    }
+}
+
+
+@available(iOS 10.0, *)
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        print(notification.request.content.body)
+        completionHandler([.alert]) // the paramters indicate how to present this notification when app is in foreground.
+        // we can pass an emty array to this completionHandler, for presenting nothing.
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print(response)
+        completionHandler()
     }
 }
 
