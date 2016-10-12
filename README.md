@@ -17,3 +17,7 @@ apn push "device token" -c ./apple_push_notification.pem -P '{"aps":{"alert":"Ne
 apn push "device token" -c ./apple_push_notification.pem -P '{"aps":{"alert":"You’re invited!","sound":"default","badge":1,"category":"INVITE_CATEGORY"}}'
 ```
 
+* Use NotificationService:
+```
+apn push "device token" -c ./apple_push_notification.pem -P '{"aps":{"alert":"New Message Available","sound":"default","badge":1,"mutable-content":1},"encrypted-content":"#myencrypedcontent"}'
+```
